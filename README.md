@@ -23,7 +23,6 @@ $ python main.py <link_to_repo_directory>
 Example:
   $ python main.py https://github.com/amarlearning/PyStalker/tree/master/version01
 
-
 ```
 
 > **OR**
@@ -44,5 +43,21 @@ Examples:
   $ python main.py GoogleChrome -r samples -d push-messaging-and-notifications 
   $ python main.py GoogleChrome -r samples -d push-messaging-and-notifications -b gh-pages
  
- 
 ```
+***
+
+## Issues
+
+You can report the bugs at the [issue tracker](https://github.com/amarlearning/Github-Sectory/issues)
+
+**OR**
+
+You can [tweet me](https://twitter.com/iamarpandey) if you can't get it to work. In fact, you should tweet me anyway.
+
+***
+
+##License
+
+Built with ♥ by Amar Prakash Pandey([@amarlearning](http://github.com/amarlearning)) under [MIT License](http://amarlearning.mit-license.org/) 
+
+You can find a copy of the License at http://amarlearning.mit-license.org/
