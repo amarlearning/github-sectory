@@ -9,7 +9,7 @@ import os, re
 import sys, string
 import json
 import urllib2
-from pprint import pprint
+from clint.textui import colored, puts
 
 class GithubSectory():
 	""" docstring for GithubSectory : Python script to download Github Project Subdirectory! """
@@ -21,17 +21,26 @@ class GithubSectory():
 		self.ghapi = "https://api.github.com/repos/"
 		self.gh = "https://github.com/"
 
+	def clear(self):
+
+		"""for removing the clutter from the screen when necessary"""
+		
+		os.system('cls' if os.name == 'nt' else 'clear')
+
+
 	def getSysArguments(self):
 
 		""" Lets see what kind of input user has given to us """
-		
+	
 		try:
 			self.link = sys.argv[1]
 		except Exception as e:
-			print "Error : Not argument. Truncating process!"
+			puts(colored.red("Error : Not argument. Truncating process!"))
 			sys.exit(0)
 		
 		if not re.search(r'github.com', self.link):	
+			
+			puts(colored.magenta("[ Validating Input Parameters ]"))
 			
 			for index, arg in enumerate(self.arg):
 				if arg == "-r":
@@ -44,13 +53,13 @@ class GithubSectory():
 			try:
 				self.link = self.ghapi + sys.argv[1]
 			except Exception as e:
-				print "Error : User/Organisation not mentioned. Truncating process!"
+				puts(colored.red("Error : User/Organisation not mentioned. Truncating process!"))
 				sys.exit(0)
 
 			try:
 				self.link = self.link + "/" + self.repo
 			except Exception as e:
-				print "Error : Repository not mentioned. Truncating process!"
+				puts(colored.red("Error : Repository not mentioned. Truncating process!"))
 				sys.exit(0)
 
 			try:
@@ -65,26 +74,41 @@ class GithubSectory():
 				self.downloadMe(self.link)
 		
 		else:
-			self.link = self.link.replace(self.gh, self.ghapi)
-			self.link = self.link.replace('tree', 'contents')
-			self.linkList = self.link.split("/")
-			self.repo = self.linkList[5]
-			self.link = self.link.replace(self.linkList[7]+"/", '')
-			self.link = self.link + "/?ref=" + self.linkList[7]
-			self.downloadMe(self.link)
-
+			puts(colored.magenta("[ Validating Input URL ]"))
+			if len(self.link.split("/")) < 7:
+				puts(colored.green("Normal Link, use git commands to clone repository!"))
+			else:
+				self.link = self.link.replace(self.gh, self.ghapi)
+				self.link = self.link.replace('tree', 'contents')
+				self.linkList = self.link.split("/")
+				self.repo = self.linkList[8]
+				self.link = self.link.replace(self.linkList[7]+"/", '')
+				self.link = self.link + "/?ref=" + self.linkList[7]
+				self.downloadMe(self.link)
 
 
 	def downloadMe(self, parameter):
 
 		""" Method to download file, link is passed via parameter """
 
+		puts(colored.yellow("[ Getting folder content ]"))
 		self.downloadLink = parameter
-		self.parsed = json.loads(urllib2.urlopen(self.downloadLink).read())
+		try:
+			self.parsed = json.loads(urllib2.urlopen(self.downloadLink).read())
+		except urllib2.HTTPError as err:
+			if err.code == 404:
+				puts(colored.red("[ Invalid URL! Maybe private repo ]"))
+				sys.exit(0)
+			else:
+				raise
+				sys.exit(0)
+
 		if not os.path.exists(self.repo):
 			os.makedirs(self.repo)
 		self.tempPath = os.path.join(os.getcwd(), self.repo)
+		puts(colored.green("[ Downloading all required files ]"))
 		self.workingRecursively(self.tempPath, self.parsed)
+		puts(colored.green("[ Finished ]"))
 
 
 	def workingRecursively(self, filepath, filedata):
@@ -93,12 +117,17 @@ class GithubSectory():
 
 		for file in filedata:
 			if file['type'] == "file":
-				file = open(os.path.join(filepath, file['name']),'a+')
-				file.close()	
+				fileCreate = open(os.path.join(filepath, file['name']),'a+')
+				fileCreate.write(urllib2.urlopen(file['download_url']).read())
+				fileCreate.close()
+			else:
+				changedPath = os.path.join(filepath, file['name'])
+				if not os.path.exists(changedPath):
+					os.makedirs(changedPath)
+				newFileData = json.loads(urllib2.urlopen(file['url']).read())
+				self.workingRecursively(changedPath, newFileData)
 
 
 if __name__ == '__main__':
+	GithubSectory().clear()
 	GithubSectory().getSysArguments()
-
-# Pattern #1 : main.py https://github.com/GoogleChrome/samples/tree/gh-pages/push-messaging-and-notifications
-# Pattern #2 : main.py GoogleChrome -r samples -d push-messaging-and-notifications -b gh-pages
