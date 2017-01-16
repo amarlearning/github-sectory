@@ -129,6 +129,4 @@ class GithubSectory():
 
 
 if __name__ == '__main__':
-	# GithubSectory().clear()clear
-
 	GithubSectory().getSysArguments()
