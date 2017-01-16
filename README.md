@@ -1,2 +1,3 @@
-# Github-Sectory
-Python script to download Github Project Subdirectory!
+## Github-Sectory
+
+Python script to download subdirectory or file of any Github repository!
