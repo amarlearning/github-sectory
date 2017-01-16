@@ -80,8 +80,8 @@ class GithubSectory():
 			else:
 				self.link = self.link.replace(self.gh, self.ghapi)
 				self.link = self.link.replace('tree', 'contents')
-				self.linkList = self.link.split("/")
-				self.repo = self.linkList[8]
+				self.linkList = self.li nk.split("/")
+				self.repo = self.dir = self.linkList[8]
 				self.link = self.link.replace(self.linkList[7]+"/", '')
 				self.link = self.link + "/?ref=" + self.linkList[7]
 				self.downloadMe(self.link)
@@ -103,9 +103,9 @@ class GithubSectory():
 				raise
 				sys.exit(0)
 
-		if not os.path.exists(self.repo):
-			os.makedirs(self.repo)
-		self.tempPath = os.path.join(os.getcwd(), self.repo)
+		if not os.path.exists(self.dir):
+			os.makedirs(self.dir)
+		self.tempPath = os.path.join(os.getcwd(), self.dir)
 		puts(colored.green("[ Downloading all required files ]"))
 		self.workingRecursively(self.tempPath, self.parsed)
 		puts(colored.green("[ Finished ]"))
@@ -129,5 +129,6 @@ class GithubSectory():
 
 
 if __name__ == '__main__':
-	GithubSectory().clear()
+	# GithubSectory().clear()clear
+
 	GithubSectory().getSysArguments()
