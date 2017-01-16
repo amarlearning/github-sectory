@@ -35,7 +35,7 @@ Needed:
   -r, -d for repository and directory
 
 Optional:
-  -b for branch 
+  -b for branch                              [boolean]
   
 **Note:** Default branch will be master
  
