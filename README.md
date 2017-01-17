@@ -36,14 +36,14 @@ Needed:
 
 Optional:
   -b for branch                              [boolean]
-  
-**Note:** Default branch will be master
  
 Examples:
   $ python main.py GoogleChrome -r samples -d push-messaging-and-notifications 
   $ python main.py GoogleChrome -r samples -d push-messaging-and-notifications -b gh-pages
  
 ```
+**Note:** Default branch will be master
+
 ***
 
 ## Issues
