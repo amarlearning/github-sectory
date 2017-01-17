@@ -80,7 +80,7 @@ class GithubSectory():
 			else:
 				self.link = self.link.replace(self.gh, self.ghapi)
 				self.link = self.link.replace('tree', 'contents')
-				self.linkList = self.li nk.split("/")
+				self.linkList = self.link.split("/")
 				self.repo = self.dir = self.linkList[8]
 				self.link = self.link.replace(self.linkList[7]+"/", '')
 				self.link = self.link + "/?ref=" + self.linkList[7]
