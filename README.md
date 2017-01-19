@@ -11,17 +11,16 @@
 
 ## Install
 ```
-$ git clone https://github.com/amarlearning/Github-Sectory.git
-$ cd Github-Sectory && pip install -r requirements.txt
+$ sudo pip install github-sectory
 ```
 ## Usage
 
 ### Commands available
 ```
-$ python main.py <link_to_repo_directory>
+$ github-sectory <link_to_repo_directory>
 
 Example:
-  $ python main.py https://github.com/amarlearning/PyStalker/tree/master/version01
+  $ github-sectory https://github.com/amarlearning/PyStalker/tree/master/version01
 
 ```
 
@@ -29,7 +28,7 @@ Example:
 
 ```
 
-$ python main.py <github_username> -r <repository name> -d <directory name> [arguments]
+$ github-sectory <github_username> -r <repository name> -d <directory name> [arguments]
 
 Needed:
   -r, -d for repository and directory
@@ -38,8 +37,8 @@ Optional:
   -b for branch                              [boolean]
  
 Examples:
-  $ python main.py GoogleChrome -r samples -d push-messaging-and-notifications 
-  $ python main.py GoogleChrome -r samples -d push-messaging-and-notifications -b gh-pages
+  $ github-sectory GoogleChrome -r samples -d push-messaging-and-notifications 
+  $ github-sectory GoogleChrome -r samples -d push-messaging-and-notifications -b gh-pages
  
 ```
 **Note:** Default branch will be master
