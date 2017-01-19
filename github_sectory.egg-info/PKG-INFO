@@ -1,0 +1,18 @@
+Metadata-Version: 1.1
+Name: github-sectory
+Version: 1.1.4
+Summary: CLI for downloading sub-directory of any Github repository!
+Home-page: https://github.com/amarlearning/Github-Sectory
+Author: Amar Prakash Pandey (@amarlearning)
+Author-email: amar.om1994@gmail.com
+License: MIT
+Description: UNKNOWN
+Keywords: github repository download sub-directory
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Programming Language :: Python :: 2.7

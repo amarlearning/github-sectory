@@ -1,0 +1,7 @@
+github-sectory
+setup.py
+github_sectory.egg-info/PKG-INFO
+github_sectory.egg-info/SOURCES.txt
+github_sectory.egg-info/dependency_links.txt
+github_sectory.egg-info/requires.txt
+github_sectory.egg-info/top_level.txt
