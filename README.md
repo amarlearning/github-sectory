@@ -13,7 +13,7 @@
 
 ## Install
 ```
-$ sudo pip install github-sectory
+$ pip install github-sectory
 ```
 ## Usage
 
