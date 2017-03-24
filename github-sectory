@@ -94,7 +94,7 @@ class GithubSectory():
 		puts(colored.yellow("[ Getting folder content ]"))
 		self.downloadLink = parameter
 		try:
-			self.parsed = json.loads(urllib2.urlopen(self.downloadLink).read())
+			self.parsed = json.loads(urllib2.urlopen(self.downloadLink, timeout=30).read())
 		except urllib2.HTTPError as err:
 			if err.code == 404:
 				puts(colored.red("[ Invalid URL! Maybe private repo ]"))
@@ -102,6 +102,12 @@ class GithubSectory():
 			else:
 				raise
 				sys.exit(0)
+                except urllib2.URLError as err:
+                        puts(colored.red("[ Error: You do not seem to have any internet connection! ]" ))
+                        sys.exit(0)
+                except Exception as err:
+                        puts(colored.red("[ Error: Either your internet connection seems to run into problem or the file is too large! ]"))
+                        sys.exit(0)
 
 		if not os.path.exists(self.dir):
 			os.makedirs(self.dir)
@@ -114,19 +120,24 @@ class GithubSectory():
 	def workingRecursively(self, filepath, filedata):
 		
 		""" Get the List of all filenames and link of required subdirectory """
-
-		for file in filedata:
-			if file['type'] == "file":
-				fileCreate = open(os.path.join(filepath, file['name']),'a+')
-				fileCreate.write(urllib2.urlopen(file['download_url']).read())
-				fileCreate.close()
-			else:
-				changedPath = os.path.join(filepath, file['name'])
-				if not os.path.exists(changedPath):
-					os.makedirs(changedPath)
-				newFileData = json.loads(urllib2.urlopen(file['url']).read())
-				self.workingRecursively(changedPath, newFileData)
-
+                try:
+		        for file in filedata:
+			        if file['type'] == "file":
+				        fileCreate = open(os.path.join(filepath, file['name']),'a+')
+				        fileCreate.write(urllib2.urlopen(file['download_url'], timeout=30).read())
+				        fileCreate.close()
+			        else:
+				        changedPath = os.path.join(filepath, file['name'])
+				        if not os.path.exists(changedPath):
+					        os.makedirs(changedPath)
+				        newFileData = json.loads(urllib2.urlopen(file['url'], timeout=30).read())
+				        self.workingRecursively(changedPath, newFileData)
+                except urllib2.URLError as err:
+                        puts(colored.red("[ Error: Some problem occured with your internet connection!]" ))
+                        sys.exit(0)
+                except Exception as err:
+                        puts(colored.red("[ Error: Either your internet connection seems to run into problem or the file is too large! ]"))
+                        sys.exit(0)
 
 if __name__ == '__main__':
 	GithubSectory().getSysArguments()
