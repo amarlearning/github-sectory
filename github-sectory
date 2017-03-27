@@ -14,12 +14,14 @@ from clint.textui import colored, puts
 class GithubSectory():
 	""" docstring for GithubSectory : Python script to download Github Project Subdirectory! """
 	
-
 	def __init__(self):
 		self.arg = sys.argv
 		self.link = ""
 		self.ghapi = "https://api.github.com/repos/"
 		self.gh = "https://github.com/"
+                self.totalSize = 0
+                self.downloaded = 0
+                self.chunk = 1
 
 	def clear(self):
 
@@ -86,7 +88,6 @@ class GithubSectory():
 				self.link = self.link + "/?ref=" + self.linkList[7]
 				self.downloadMe(self.link)
 
-
 	def downloadMe(self, parameter):
 
 		""" Method to download file, link is passed via parameter """
@@ -95,6 +96,9 @@ class GithubSectory():
 		self.downloadLink = parameter
 		try:
 			self.parsed = json.loads(urllib2.urlopen(self.downloadLink, timeout=30).read())
+                        self.totalSize = self.getSize(self.downloadLink)
+                        self.chunk = int(0.01*self.totalSize) + 1
+
 		except urllib2.HTTPError as err:
 			if err.code == 404:
 				puts(colored.red("[ Invalid URL! Maybe private repo ]"))
@@ -114,17 +118,60 @@ class GithubSectory():
 		self.tempPath = os.path.join(os.getcwd(), self.dir)
 		puts(colored.green("[ Downloading all required files ]"))
 		self.workingRecursively(self.tempPath, self.parsed)
-		puts(colored.green("[ Finished ]"))
+		puts(colored.green("\n[ Finished ]"))
 
+        def getSize(self, url):
+                try:
+                        size = 0
+                        data = json.loads(urllib2.urlopen(url, timeout=30).read())
+                        for item in data:
+                                if item['type'] == 'file':
+                                        size += item['size']
+                                elif item['type'] == 'dir':
+                                        size += self.getSize(item['url'])
+                        return size
+
+                except urllib2.HTTPError as err:
+			if err.code == 404:
+				puts(colored.red("[ Invalid URL! Maybe private repo ]"))
+				sys.exit(0)
+			else:
+				raise
+				sys.exit(0)
+                except urllib2.URLError as err:
+                        puts(colored.red("[ Error: You do not seem to have any internet connection! ]" ))
+                        sys.exit(0)
+                except Exception as err:
+                        puts(colored.red("[ Error: Either your internet connection seems to run into problem or the file is too large! ]"))
+                        sys.exit(0)
 
 	def workingRecursively(self, filepath, filedata):
 		
 		""" Get the List of all filenames and link of required subdirectory """
                 try:
+                        green = '\033[01;32m'
 		        for file in filedata:
 			        if file['type'] == "file":
 				        fileCreate = open(os.path.join(filepath, file['name']),'a+')
-				        fileCreate.write(urllib2.urlopen(file['download_url'], timeout=30).read())
+                                        if self.chunk >= file['size']:
+				                fileCreate.write(urllib2.urlopen(file['download_url'], timeout=30).read())
+                                                self.downloaded += file['size']
+                                                percentage = int((self.downloaded*100)/self.totalSize)
+                                                sys.stdout.write('\r')
+                                                sys.stdout.write(green+"[%-100s] %d%%" % ('#'*(int(percentage)), percentage))
+                                                sys.stdout.flush()
+                                        else:
+                                                req = urllib2.urlopen(file['download_url'], timeout=30)
+                                                while True:
+                                                        chunkData = req.read(self.chunk)
+                                                        if not chunkData:
+                                                                break
+                                                        fileCreate.write(chunkData)
+                                                        self.downloaded += len(chunkData)
+                                                        percentage = int((self.downloaded*100)/self.totalSize)
+                                                        sys.stdout.write('\r')
+                                                        sys.stdout.write(green+"[%-100s] %d%%" % ('#'*(int(percentage)), percentage))
+                                                        sys.stdout.flush()
 				        fileCreate.close()
 			        else:
 				        changedPath = os.path.join(filepath, file['name'])
