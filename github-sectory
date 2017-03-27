@@ -180,10 +180,10 @@ class GithubSectory():
 				        newFileData = json.loads(urllib2.urlopen(file['url'], timeout=30).read())
 				        self.workingRecursively(changedPath, newFileData)
                 except urllib2.URLError as err:
-                        puts(colored.red("[ Error: Some problem occured with your internet connection!]" ))
+                        puts(colored.red("\n[ Error: Some problem occured with your internet connection!]" ))
                         sys.exit(0)
                 except Exception as err:
-                        puts(colored.red("[ Error: Either your internet connection seems to run into problem or the file is too large! ]"))
+                        puts(colored.red("\n[ Error: Either your internet connection seems to run into problem or the file is too large! ]"))
                         sys.exit(0)
 
 if __name__ == '__main__':
