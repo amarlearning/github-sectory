@@ -1,5 +1,6 @@
 # Github Sectory
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ce49706c9f594d46b127e91cd098f6c7)](https://app.codacy.com/app/amar.om1994/Github-Sectory?utm_source=github.com&utm_medium=referral&utm_content=amarlearning/Github-Sectory&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/amarlearning/Github-Sectory.svg?branch=master)](https://travis-ci.org/amarlearning/Github-Sectory/)
 [![PyPI](https://img.shields.io/badge/pypi-v1.1.4-blue.svg)](https://pypi.python.org/pypi/github-sectory)
 [![Issues](https://camo.githubusercontent.com/926d8ca67df15de5bd1abac234c0603d94f66c00/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f636f6e747269627574696f6e732d77656c636f6d652d627269676874677265656e2e7376673f7374796c653d666c6174)](https://github.com/amarlearning/Github-Sectory/issues)
