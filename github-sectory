@@ -1,190 +1,213 @@
-#!/usr/bin/env python
-# @Author: @amarlearning
-# @Date:   2017-01-15
-# @Email:  amar.om1994@gmail.com  
-# MIT License. You can find a copy of the License
-# @http://amarlearning.mit-license.org
+#!/usr/bin/python
+# Author: @amarlearning
 
-import os, re
-import sys, string
+import os
+import re
+import sys
+import string
 import json
-import urllib2
 from clint.textui import colored, puts
 
-class GithubSectory():
-	""" docstring for GithubSectory : Python script to download Github Project Subdirectory! """
-	
-	def __init__(self):
-		self.arg = sys.argv
-		self.link = ""
-		self.ghapi = "https://api.github.com/repos/"
-		self.gh = "https://github.com/"
-                self.totalSize = 0
-                self.downloaded = 0
-                self.chunk = 1
-
-	def clear(self):
-
-		"""for removing the clutter from the screen when necessary"""
-		
-		os.system('cls' if os.name == 'nt' else 'clear')
+try:
+    import urllib.request as urllib2
+except ImportError:
+    import urllib2
 
 
-	def getSysArguments(self):
+class GithubSectory:
 
-		""" Lets see what kind of input user has given to us """
-	
-		try:
-			self.link = sys.argv[1]
-		except Exception as e:
-			puts(colored.red("Error : Not argument. Truncating process!"))
-			sys.exit(0)
-		
-		if not re.search(r'github.com', self.link):	
-			
-			puts(colored.magenta("[ Validating Input Parameters ]"))
-			
-			for index, arg in enumerate(self.arg):
-				if arg == "-r":
-					self.repo = self.arg[index+1]
-				if arg == "-d":
-					self.dir = self.arg[index+1]
-				if arg == "-b":
-					self.branch = self.arg[index+1]
+    """ docstring for GithubSectory : Python script to download Github Project Subdirectory! """
 
-			try:
-				self.link = self.ghapi + sys.argv[1]
-			except Exception as e:
-				puts(colored.red("Error : User/Organisation not mentioned. Truncating process!"))
-				sys.exit(0)
+    def __init__(self):
+        self.arg = sys.argv
+        self.link = ''
+        self.ghapi = 'https://api.github.com/repos/'
+        self.gh = 'https://github.com/'
+        self.totalSize = 0
+        self.downloaded = 0
+        self.chunk = 1
 
-			try:
-				self.link = self.link + "/" + self.repo
-			except Exception as e:
-				puts(colored.red("Error : Repository not mentioned. Truncating process!"))
-				sys.exit(0)
+    def clear(self):
+        """for removing the clutter from the screen when necessary"""
 
-			try:
-				self.link = self.link + "/contents/" + self.dir
-				try:
-					self.link = self.link + "?ref=" + self.branch
-					self.downloadMe(self.link)
-				except AttributeError:
-					self.downloadMe(self.link)
-			except AttributeError:
-				self.link = self.gh + sys.argv[1] + "/" + self.repo + ".git"
-				self.downloadMe(self.link)
-		
-		else:
-			puts(colored.magenta("[ Validating Input URL ]"))
-			if len(self.link.split("/")) < 8:
-				puts(colored.green("Normal Link, use git commands to clone repository!"))
-			else:
-				self.link = self.link.replace(self.gh, self.ghapi)
-				self.link = self.link.replace('tree', 'contents')
-				self.linkList = self.link.split("/")
-				self.repo = self.dir = self.linkList[-1]
-				self.link = self.link.replace(self.linkList[7]+"/", '')
-				self.link = self.link + "/?ref=" + self.linkList[7]
-				self.downloadMe(self.link)
+        os.system(('cls' if os.name == 'nt' else 'clear'))
 
-	def downloadMe(self, parameter):
+    def getSysArguments(self):
+        """ Lets see what kind of input user has given to us """
 
-		""" Method to download file, link is passed via parameter """
+        try:
+            self.link = sys.argv[1]
+        except Exception:
+            puts(colored.red('Error : Not argument. Truncating process!'
+                 ))
+            sys.exit(0)
 
-		puts(colored.yellow("[ Getting folder content ]"))
-		self.downloadLink = parameter
-		try:
-			self.parsed = json.loads(urllib2.urlopen(self.downloadLink, timeout=30).read())
-                        self.totalSize = self.getSize(self.downloadLink)
-                        self.chunk = int(0.01*self.totalSize) + 1
+        if not re.search(r'github.com', self.link):
 
-		except urllib2.HTTPError as err:
-			if err.code == 404:
-				puts(colored.red("[ Invalid URL! Maybe private repo ]"))
-				sys.exit(0)
-			else:
-				raise
-				sys.exit(0)
-                except urllib2.URLError as err:
-                        puts(colored.red("[ Error: You do not seem to have any internet connection! ]" ))
-                        sys.exit(0)
-                except Exception as err:
-                        puts(colored.red("[ Error: Either your internet connection seems to run into problem or the file is too large! ]"))
-                        sys.exit(0)
+            puts(colored.magenta('[ Validating Input Parameters ]'))
 
-		if not os.path.exists(self.dir):
-			os.makedirs(self.dir)
-		self.tempPath = os.path.join(os.getcwd(), self.dir)
-		puts(colored.green("[ Downloading all required files ]"))
-		self.workingRecursively(self.tempPath, self.parsed)
-		puts(colored.green("\n[ Finished ]"))
+            for (index, arg) in enumerate(self.arg):
+                if arg == '-r':
+                    self.repo = self.arg[index + 1]
+                if arg == '-d':
+                    self.dir = self.arg[index + 1]
+                if arg == '-b':
+                    self.branch = self.arg[index + 1]
 
-        def getSize(self, url):
+            try:
+                self.link = self.ghapi + sys.argv[1]
+            except Exception:
+                puts(colored.red('Error : User/Organisation not mentioned. Truncating process!'
+                     ))
+                sys.exit(0)
+
+            try:
+                self.link = self.link + '/' + self.repo
+            except Exception:
+                puts(colored.red('Error : Repository not mentioned. Truncating process!'
+                     ))
+                sys.exit(0)
+
+            try:
+                self.link = self.link + '/contents/' + self.dir
                 try:
-                        size = 0
-                        data = json.loads(urllib2.urlopen(url, timeout=30).read())
-                        for item in data:
-                                if item['type'] == 'file':
-                                        size += item['size']
-                                elif item['type'] == 'dir':
-                                        size += self.getSize(item['url'])
-                        return size
+                    self.link = self.link + '?ref=' + self.branch
+                    self.downloadMe(self.link)
+                except AttributeError:
+                    self.downloadMe(self.link)
+            except AttributeError:
+                self.link = self.gh + sys.argv[1] + '/' + self.repo \
+                    + '.git'
+                self.downloadMe(self.link)
+        else:
 
-                except urllib2.HTTPError as err:
-			if err.code == 404:
-				puts(colored.red("[ Invalid URL! Maybe private repo ]"))
-				sys.exit(0)
-			else:
-				raise
-				sys.exit(0)
-                except urllib2.URLError as err:
-                        puts(colored.red("[ Error: You do not seem to have any internet connection! ]" ))
-                        sys.exit(0)
-                except Exception as err:
-                        puts(colored.red("[ Error: Either your internet connection seems to run into problem or the file is too large! ]"))
-                        sys.exit(0)
+            puts(colored.magenta('[ Validating Input URL ]'))
+            if len(self.link.split('/')) < 8:
+                puts(colored.green('Normal Link, use git commands to clone repository!'
+                     ))
+            else:
+                self.link = self.link.replace(self.gh, self.ghapi)
+                self.link = self.link.replace('tree', 'contents')
+                self.linkList = self.link.split('/')
+                self.repo = self.dir = self.linkList[-1]
+                self.link = self.link.replace(self.linkList[7] + '/', ''
+                        )
+                self.link = self.link + '/?ref=' + self.linkList[7]
+                self.downloadMe(self.link)
 
-	def workingRecursively(self, filepath, filedata):
-		
-		""" Get the List of all filenames and link of required subdirectory """
-                try:
-                        green = '\033[01;32m'
-		        for file in filedata:
-			        if file['type'] == "file":
-				        fileCreate = open(os.path.join(filepath, file['name']),'a+')
-                                        if self.chunk >= file['size']:
-				                fileCreate.write(urllib2.urlopen(file['download_url'], timeout=30).read())
-                                                self.downloaded += file['size']
-                                                percentage = int((self.downloaded*100)/self.totalSize)
-                                                sys.stdout.write('\r')
-                                                sys.stdout.write(green+"[%-100s] %d%%" % ('#'*(int(percentage)), percentage))
-                                                sys.stdout.flush()
-                                        else:
-                                                req = urllib2.urlopen(file['download_url'], timeout=30)
-                                                while True:
-                                                        chunkData = req.read(self.chunk)
-                                                        if not chunkData:
-                                                                break
-                                                        fileCreate.write(chunkData)
-                                                        self.downloaded += len(chunkData)
-                                                        percentage = int((self.downloaded*100)/self.totalSize)
-                                                        sys.stdout.write('\r')
-                                                        sys.stdout.write(green+"[%-100s] %d%%" % ('#'*(int(percentage)), percentage))
-                                                        sys.stdout.flush()
-				        fileCreate.close()
-			        else:
-				        changedPath = os.path.join(filepath, file['name'])
-				        if not os.path.exists(changedPath):
-					        os.makedirs(changedPath)
-				        newFileData = json.loads(urllib2.urlopen(file['url'], timeout=30).read())
-				        self.workingRecursively(changedPath, newFileData)
-                except urllib2.URLError as err:
-                        puts(colored.red("\n[ Error: Some problem occured with your internet connection!]" ))
-                        sys.exit(0)
-                except Exception as err:
-                        puts(colored.red("\n[ Error: Either your internet connection seems to run into problem or the file is too large! ]"))
-                        sys.exit(0)
+    def downloadMe(self, parameter):
+        """ Method to download file, link is passed via parameter """
+
+        puts(colored.yellow('[ Getting folder content ]'))
+        self.downloadLink = parameter
+        try:
+            self.parsed = json.loads(urllib2.urlopen(self.downloadLink,
+                    timeout=30).read())
+            self.totalSize = self.getSize(self.downloadLink)
+            self.chunk = int(0.01 * self.totalSize) + 1
+        except urllib2.HTTPError:
+
+            if err.code == 404:
+                puts(colored.red('[ Invalid URL! Maybe private repo ]'))
+                sys.exit(0)
+            else:
+                raise
+                sys.exit(0)
+        except urllib2.URLError:
+            puts(colored.red('[ Error: You do not seem to have any internet connection! ]'
+                 ))
+            sys.exit(0)
+        except Exception:
+            puts(colored.red('[ Error: Either your internet connection seems to run into problem or the file is too large! ]'
+                 ))
+            sys.exit(0)
+
+        if not os.path.exists(self.dir):
+            os.makedirs(self.dir)
+        self.tempPath = os.path.join(os.getcwd(), self.dir)
+        puts(colored.green('[ Downloading all required files ]'))
+        self.workingRecursively(self.tempPath, self.parsed)
+        puts(colored.green('\n[ Finished ]'))
+
+    def getSize(self, url):
+        try:
+            size = 0
+            data = json.loads(urllib2.urlopen(url, timeout=30).read())
+            for item in data:
+                if item['type'] == 'file':
+                    size += item['size']
+                elif item['type'] == 'dir':
+                    size += self.getSize(item['url'])
+            return size
+        except urllib2.HTTPError:
+
+            if err.code == 404:
+                puts(colored.red('[ Invalid URL! Maybe private repo ]'))
+                sys.exit(0)
+            else:
+                raise
+                sys.exit(0)
+        except urllib2.URLError:
+            puts(colored.red('[ Error: You do not seem to have any internet connection! ]'
+                 ))
+            sys.exit(0)
+        except Exception:
+            puts(colored.red('[ Error: Either your internet connection seems to run into problem or the file is too large! ]'
+                 ))
+            sys.exit(0)
+
+    def workingRecursively(self, filepath, filedata):
+        """ Get the List of all filenames and link of required subdirectory """
+
+        try:
+            green = '\033[01;32m'
+            for file in filedata:
+                if file['type'] == 'file':
+                    fileCreate = open(os.path.join(filepath, file['name'
+                            ]), 'a+')
+                    if self.chunk >= file['size']:
+                        fileCreate.write(urllib2.urlopen(file['download_url'
+                                ], timeout=30).read())
+                        self.downloaded += file['size']
+                        percentage = int(self.downloaded * 100
+                                / self.totalSize)
+                        sys.stdout.write('\r')
+                        sys.stdout.write(green + '[%-100s] %d%%' % ('#'
+                                * int(percentage), percentage))
+                        sys.stdout.flush()
+                    else:
+                        req = urllib2.urlopen(file['download_url'],
+                                timeout=30)
+                        while True:
+                            chunkData = req.read(self.chunk)
+                            if not chunkData:
+                                break
+                            fileCreate.write(chunkData)
+                            self.downloaded += len(chunkData)
+                            percentage = int(self.downloaded * 100
+                                    / self.totalSize)
+                            sys.stdout.write('\r')
+                            sys.stdout.write(green + '[%-100s] %d%%'
+                                    % ('#' * int(percentage),
+                                    percentage))
+                            sys.stdout.flush()
+                    fileCreate.close()
+                else:
+                    changedPath = os.path.join(filepath, file['name'])
+                    if not os.path.exists(changedPath):
+                        os.makedirs(changedPath)
+                    newFileData = json.loads(urllib2.urlopen(file['url'
+                            ], timeout=30).read())
+                    self.workingRecursively(changedPath, newFileData)
+        except urllib2.URLError:
+            puts(colored.red('\n[ Error: Some problem occured with your internet connection!]'
+                 ))
+            sys.exit(0)
+        except Exception:
+            puts(colored.red('\n[ Error: Either your internet connection seems to run into problem or the file is too large! ]'
+                 ))
+            sys.exit(0)
+
 
 if __name__ == '__main__':
-	GithubSectory().getSysArguments()
+    GithubSectory().getSysArguments()	
