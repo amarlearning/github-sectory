@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
 	name='github-sectory',
-	version='1.1.4',
+	version='1.2.0',
 	description='CLI for downloading sub-directory of any Github repository!',
 	url='https://github.com/amarlearning/Github-Sectory',
 	author='Amar Prakash Pandey (@amarlearning)',
@@ -15,9 +15,7 @@ setup(
 		'Intended Audience :: Developers',
 		'Topic :: Software Development :: Build Tools',
 		'License :: OSI Approved :: MIT License',
-		'Programming Language :: Python :: 2',
-		'Programming Language :: Python :: 2.6',
-		'Programming Language :: Python :: 2.7'
+		'Programming Language :: Python :: 3.7'
 	],
 	scripts=['github-sectory']
 )
