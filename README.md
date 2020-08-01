@@ -1,11 +1,9 @@
 # Github Sectory
 
 [![Build Status](https://travis-ci.org/amarlearning/Github-Sectory.svg?branch=master)](https://travis-ci.org/amarlearning/Github-Sectory/)
-[![PyPI](https://img.shields.io/badge/pypi-v1.1.6-blue.svg)](https://pypi.python.org/pypi/github-sectory)
 [![Downloads](https://pepy.tech/badge/github-sectory)](https://pepy.tech/project/github-sectory)
 [![HitCount](http://hits.dwyl.io/amarlearning/Github-Sectory.svg)](http://hits.dwyl.io/amarlearning/Github-Sectory)
 [![MIT LICENSE](https://img.shields.io/pypi/l/pyzipcode-cli.svg)](http://amarlearning.mit-license.org/)
-[![Say Thanks!](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg)](https://saythanks.io/to/amarlearning)
 
 > CLI for downloading sub-directory of any Github repository using Github Content API!
 
