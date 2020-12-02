@@ -9,6 +9,7 @@ from itertools import cycle
 from lxml.html import fromstring
 from clint.textui import colored, puts
 
+
 class GithubSectory():
     """ docstring for GithubSectory : Python script to download Github Project Subdirectory! """
 
