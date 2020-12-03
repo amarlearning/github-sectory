@@ -33,18 +33,19 @@ Example:
 
 ```
 
-$ github-sectory <github_username> -r <repository name> -d <directory name> [arguments]
+Options:
+	-r, name of the repository where the folder/directory is present.
+	-d, name of the directory that you wish to download.
+	-u, username/organisation name of owner of repository.
 
-Needed:
-  -r, -d for repository and directory
+	-b, branch name of the repository, default is master [OPTIONAL].
 
-Optional:
-  -b for branch                              [boolean]
+Usage:
+	1. Pass the directory link as an argument-
+		$ github-sectory <github-link-to-directory>
 
-Examples:
-  $ github-sectory GoogleChrome -r samples -d push-messaging-and-notifications
-  $ github-sectory GoogleChrome -r samples -d push-messaging-and-notifications -b gh-pages
-
+	2. Pass the details as an arguments specified below-
+		$ github-sectory -u <username> -r <repository-name> -d <directory-name> -b <branch-name>
 ```
 
 **Note:** Default branch will be master
