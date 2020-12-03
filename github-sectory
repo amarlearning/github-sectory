@@ -3,129 +3,123 @@
 import os
 import re
 import sys
-import string
 import requests
-from itertools import cycle
-from lxml.html import fromstring
 from clint.textui import colored, puts
 
 
 class GithubSectory():
-    """ docstring for GithubSectory : Python script to download Github Project Subdirectory! """
+    ''' docstring for GithubSectory : Python script to download Github Project Subdirectory! '''
 
     def __init__(self):
-        self.link = ""
-        self.arg = sys.argv
+        self.dir = ''
+        self.link = ''
+        self.repo = ''
+        self.CONST = CONST()
         self.gh = "https://github.com/"
-        self.proxies = cycle(self.get_proxies())
         self.ghapi = "https://api.github.com/repos/"
 
-    def clear(self):
-        """for removing the clutter from the screen when necessary"""
+    def createLinkFromSystemArgs(self, args):
+        ''' Method is used to parse the arguments given by user '''
 
-        os.system('cls' if os.name == 'nt' else 'clear')
-
-    def get_proxies(self):
-        url = 'https://free-proxy-list.net/'
-        response = requests.get(url)
-        parser = fromstring(response.text)
-        proxies = set()
-        for i in parser.xpath('//tbody/tr')[:10]:
-            if i.xpath('.//td[7][contains(text(),"yes")]'):
-                proxy = ":".join([i.xpath('.//td[1]/text()')
-                                  [0], i.xpath('.//td[2]/text()')[0]])
-                proxies.add(proxy)
-        return proxies
-
-    def getSysArguments(self):
-        """ Lets see what kind of input user has given to us """
-
+        # If no arguments are passed, display usage info and exit.
         try:
-            self.link = sys.argv[1]
-        except Exception as e:
-            puts(colored.red("Error : Not argument. Truncating process!"))
+            self.link = args[1]
+        except IndexError:
+            puts(colored.yellow(self.CONST.USAGE_INFORMATION))
             sys.exit(0)
 
-        if not re.search(r'github.com', self.link):
+        # Link of the directory is passed as parameter
+        if re.search(r'github.com', self.link):
+
+            puts(colored.magenta("[ Validating Input URL ]"))
+
+            if len(self.link.split("/")) < 7:
+                puts(colored.yellow(self.CONST.NORMAL_LINK_ERROR))
+                sys.exit(0)
+            else:
+                self.link = self.link.replace(self.gh, self.ghapi)
+                self.link = self.link.replace('tree', 'contents')
+                linkList = self.link.split('/')
+                self.repo = self.dir = linkList[8]
+                self.link = self.link.replace(linkList[7] + '/', '')
+                self.link = self.link + '/?ref=' + linkList[7]
+
+        else:
+
+            # Details are passed as parameters.
 
             puts(colored.magenta("[ Validating Input Parameters ]"))
 
-            for index, arg in enumerate(self.arg):
-                if arg == "-r":
-                    self.repo = self.arg[index+1]
-                if arg == "-d":
-                    self.dir = self.arg[index+1]
-                if arg == "-b":
-                    self.branch = self.arg[index+1]
+            try:
+                for index, arg in enumerate(args):
+                    if arg == "-u":
+                        name = args[index+1]
+                    if arg == "-r":
+                        self.repo = args[index+1]
+                    if arg == "-d":
+                        self.dir = args[index+1]
+                    if arg == "-b":
+                        branch = args[index+1]
+            except IndexError:
+                puts(colored.red(self.CONST.VALUE_MISSING_ERROR))
+                sys.exit(0)
 
             try:
-                self.link = self.ghapi + sys.argv[1]
-            except Exception as e:
-                puts(colored.red(
-                    "Error : User/Organisation not mentioned. Truncating process!"))
+                self.link = self.ghapi + name
+            except Exception:
+                puts(colored.red(self.CONST.USER_VALUE_ERROR))
                 sys.exit(0)
 
             try:
                 self.link = self.link + "/" + self.repo
-            except Exception as e:
-                puts(colored.red("Error : Repository not mentioned. Truncating process!"))
+            except Exception:
+                puts(colored.red(self.CONST.REPOSITORY_VALUE_ERROR))
                 sys.exit(0)
 
             try:
                 self.link = self.link + "/contents/" + self.dir
+
                 try:
-                    self.link = self.link + "?ref=" + self.branch
-                    self.downloadMe(self.link)
-                except AttributeError:
-                    self.downloadMe(self.link)
-            except AttributeError:
-                self.link = self.gh + sys.argv[1] + "/" + self.repo + ".git"
-                self.downloadMe(self.link)
+                    self.link = self.link + "?ref=" + branch
+                except UnboundLocalError:
+                    pass
 
-        else:
-            puts(colored.magenta("[ Validating Input URL ]"))
-            if len(self.link.split("/")) < 7:
-                puts(colored.green(
-                    "Normal Link, use git commands to clone repository!"))
-            else:
-                self.link = self.link.replace(self.gh, self.ghapi)
-                self.link = self.link.replace('tree', 'contents')
-                self.linkList = self.link.split("/")
-                self.repo = self.dir = self.linkList[8]
-                self.link = self.link.replace(self.linkList[7]+"/", '')
-                self.link = self.link + "/?ref=" + self.linkList[7]
-                self.downloadMe(self.link)
+            except UnboundLocalError:
+                self.link = self.gh + name + "/" + self.repo + ".git"
+                puts(colored.yellow(
+                    self.CONST.NORMAL_PARAM_ERROR.format(url=self.link)))
+                sys.exit(0)
 
-    def downloadMe(self, parameter):
-        """ Method to download file, link is passed via parameter """
+    def getDirectoryContent(self):
+        ''' Method to fetch folder content from generated link '''
 
-        puts(colored.yellow("[ Getting folder content ]"))
-        proxy = next(self.proxies)
-        self.downloadLink = parameter
+        puts(colored.yellow("[ Fetching folder content ]"))
+
         try:
-            self.parsed = requests.get(self.downloadLink).json()
-        except requests.HTTPError as err:
-            if err.code == 404:
-                puts(colored.red("[ Invalid URL! Maybe private repo ]"))
-                sys.exit(0)
-            else:
-                puts(err)
-                sys.exit(0)
+            headers = {
+                'Authorization': '<TOKEN>'
+            }
+
+            self.response = requests.request(
+                "GET", self.link, headers=headers, data={}).json()
+
+            if type(self.response) is dict and self.response['message'] == 'Not Found':
+                raise Exception()
+
+        except (requests.HTTPError, Exception):
+            puts(colored.red(self.CONST.PRIVATE_REPO_URL_ERROR))
+            sys.exit(0)
 
         if not os.path.exists(self.dir):
             os.makedirs(self.dir)
-        self.tempPath = os.path.join(os.getcwd(), self.dir)
-        puts(colored.green("[ Downloading all required files ]"))
-        self.workingRecursively(self.tempPath, self.parsed)
-        puts(colored.green("[ Finished ]"))
 
-    def workingRecursively(self, filepath, filedata):
-        """ Get the List of all filenames and link of required subdirectory """
+        self.path = os.path.join(os.getcwd(), self.dir)
 
-        proxy = next(self.proxies)
+    def downloadFile(self, filepath, folderdata):
+        ''' Create direcotry and download file using files json '''
 
-        for file in filedata:
-            if file['type'] == "file":
+        for file in folderdata:
+            if file['type'] == 'file':
                 fileCreate = open(os.path.join(filepath, file['name']), 'a+')
                 fileCreate.write(requests.get(file['download_url']).text)
                 fileCreate.close()
@@ -134,8 +128,55 @@ class GithubSectory():
                 if not os.path.exists(changedPath):
                     os.makedirs(changedPath)
                 newFileData = requests.get(file['url']).json()
-                self.workingRecursively(changedPath, newFileData)
+                self.downloadFile(changedPath, newFileData)
+
+    def start(self):
+        ''' Method is used to start the execution '''
+
+        self.createLinkFromSystemArgs(sys.argv)
+
+        self.getDirectoryContent()
+
+        puts(colored.yellow('[ Downloading all required files ]'))
+
+        self.downloadFile(self.path, self.response)
+
+        puts(colored.green('\n[ Finished ]'))
+
+
+class CONST(object):
+    USAGE_INFORMATION = """
+        \nCLI for downloading sub-directory of any Github repository.
+        \nOptions:
+        \t-r, name of the repository where the folder/directory is present.
+        \t-d, name of the directory that you wish to download.
+        \t-u, username/organisation name of owner of repository.
+
+        \t-b, branch name of the repository, default is master [OPTIONAL].
+
+        \nUsage:
+        \t1. Pass the directory link as an argument-
+        \t\t$ github-sectory <github-link-to-directory>
+
+        \t2. Pass the details as an arguments specified below-
+        \t\t$ github-sectory -u <username> -r <repository-name> -d <directory-name> -b <branch-name>
+    """
+
+    NORMAL_LINK_ERROR = "\nNormal Link, use git commands to clone repository!"
+
+    VALUE_MISSING_ERROR = "\nError : Value for the givin param is not found!"
+
+    USER_VALUE_ERROR = "\nError : User/Organisation not mentioned. Truncating process!"
+
+    REPOSITORY_VALUE_ERROR = "\nError : Repository not mentioned. Truncating process!"
+
+    NORMAL_PARAM_ERROR = "\nUse this URL [ {url} ] to clone the repository!"
+
+    PRIVATE_REPO_URL_ERROR = "\nInvalid URL! Maybe private repo"
+
+    def __setattr__(self, *_):
+        pass
 
 
 if __name__ == '__main__':
-    GithubSectory().getSysArguments()
+    GithubSectory().start()
