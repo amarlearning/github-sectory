@@ -9,7 +9,7 @@
 
 ## Demo
 
-![Demo GitHub Sectory](./sreencast.gif)
+![Demo GitHub Sectory](https://raw.githubusercontent.com/amarlearning/github-sectory/master/screencast.gif)
 
 ## Install
 
