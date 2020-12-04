@@ -22,25 +22,26 @@ $ pip install github-sectory
 ### Commands available
 
 ```
-$ github-sectory <link_to_repo_directory>
+Pass the directory link as an argument-
+	$ github-sectory <link_to_repo_directory>
 
 Example:
-  $ github-sectory https://github.com/amarlearning/PyStalker/tree/master/version01
+	$ github-sectory https://github.com/amarlearning/PyStalker/tree/master/version01
 
 ```
 
 > **OR**
 
 ```
+Pass the details as an arguments specified below-
+	$ github-sectory -u <username> -r <repository-name> -d <directory-name> -b <branch-name>
+
 Options:
 	-r, name of the repository where the folder/directory is present.
 	-d, name of the directory that you wish to download.
 	-u, username/organisation name of owner of repository.
 
 	-b, branch name of the repository, default is master [OPTIONAL].
-
-Usage: Pass the details as an arguments specified below-
-	$ github-sectory -u <username> -r <repository-name> -d <directory-name> -b <branch-name>
 ```
 
 **Note:** Default branch will be master
