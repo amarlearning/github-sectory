@@ -32,7 +32,6 @@ Example:
 > **OR**
 
 ```
-
 Options:
 	-r, name of the repository where the folder/directory is present.
 	-d, name of the directory that you wish to download.
@@ -40,12 +39,8 @@ Options:
 
 	-b, branch name of the repository, default is master [OPTIONAL].
 
-Usage:
-	1. Pass the directory link as an argument-
-		$ github-sectory <github-link-to-directory>
-
-	2. Pass the details as an arguments specified below-
-		$ github-sectory -u <username> -r <repository-name> -d <directory-name> -b <branch-name>
+Usage: Pass the details as an arguments specified below-
+	$ github-sectory -u <username> -r <repository-name> -d <directory-name> -b <branch-name>
 ```
 
 **Note:** Default branch will be master
