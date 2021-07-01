@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/amarlearning/Github-Sectory.svg?branch=master)](https://travis-ci.org/amarlearning/Github-Sectory/)
 [![Downloads](https://pepy.tech/badge/github-sectory)](https://pepy.tech/project/github-sectory)
-[![HitCount](http://hits.dwyl.com/amarlearning/Github-Sectory.svg)](http://hits.dwyl.com/amarlearning/Github-Sectory)
 [![MIT LICENSE](https://img.shields.io/pypi/l/pyzipcode-cli.svg)](http://amarlearning.mit-license.org/)
 
 > CLI for downloading sub-directory of any Github repository using Github Content API!
