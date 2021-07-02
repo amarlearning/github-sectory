@@ -8,7 +8,7 @@
 
 ## Demo
 
-![Demo GitHub Sectory](https://raw.githubusercontent.com/amarlearning/github-sectory/master/screencast.gif)
+![Demo GitHub Sectory](https://www.amarpandey.me/projects/images/github-sectory.gif)
 
 ## Install
 
