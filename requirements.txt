@@ -1,2 +1,4 @@
 clint
 requests
+pytest
+pytest-cov
