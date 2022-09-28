@@ -110,3 +110,36 @@ def test_nested(tmp_path):
     # assert "def test_nested(tmp_path):\n" in downloaded
     # check_downloaded_data_files(join(tmp_path, "tests", "data"))
 
+
+def test_branch_option(tmp_path):
+    # We will have to create a test branch to have the testing data under control
+    # Change params to: "-u", "amarlearning", "-r", "github-sectory", "-d", "tests/data", "-b", "test-branch"
+    res = gh_sectory_cmd(tmp_path, "-u", "pytest-dev", "-r", "pytest", "-d", "src", "-b", "4.6.x")
+    check_successful_output(res)
+
+    # Update this test when we have a test-branch with data different from master
+    dirs = listdir(tmp_path)
+    assert dirs == ["src"]
+    dirs = listdir(join(tmp_path, "src"))
+    assert len(dirs) == 2
+    assert set(dirs) == {"_pytest", "pytest.py"}
+
+
+def test_entire_repo(tmp_path):
+    res = gh_sectory_cmd(tmp_path, "https://github.com/amarlearning/github-sectory")
+    assert res.returncode == 0
+    assert not res.stderr
+    stdout = res.stdout.decode("utf-8")
+    assert "[ Validating Input URL ]" in stdout
+    assert "Normal Link, use git commands to clone repository!" in stdout
+    assert not listdir(tmp_path)
+
+
+def test_wrong_url(tmp_path):
+    res = gh_sectory_cmd(tmp_path, "random-text")
+    assert res.returncode == 0
+    assert not res.stderr
+    stdout = res.stdout.decode("utf-8")
+    assert "[ Validating Input Parameters ]" in stdout
+    assert "Error : User/Organisation not mentioned. Truncating process!" in stdout
+    assert not listdir(tmp_path)
