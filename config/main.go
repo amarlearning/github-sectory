@@ -11,7 +11,7 @@ func LoadEnvVariables() {
 	err := godotenv.Load(".env")
 
 	if err != nil {
-		fmt.Println("Application error - unable to load necessary configuration")
-		os.Exit(0)
+		fmt.Println("Application error - unable to load necessary env variables")
+		os.Exit(1)
 	}
 }

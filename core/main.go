@@ -14,6 +14,7 @@ import (
 func Subtory(directoryUrl string) {
 	client := client.Get()
 	ctx := context.Background()
+
 	doTheJob(client, ctx, "google", "go-github", "test")
 }
 
